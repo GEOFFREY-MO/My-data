@@ -1,0 +1,7 @@
+,,Temperature( in degrees Celsius),,,,,,
+,,Day 1,Day 2,Day 3,Day 4,Day 5,Average ,Remarks
+1,Patient A,40,37,39,37,30,36.6,DISCHANGE
+2,Patient B,39,35,37,40,37.5,37.7,ADMIT
+3,Patient C,37,36,40,39,41,38.6,ADMIT
+4,Patient D,36,38,39,38,39,38,ADMIT
+5,Patient E,38,39,37,39,39,38.4,ADMIT
