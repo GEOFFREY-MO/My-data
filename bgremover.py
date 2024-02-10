@@ -1,44 +1,75 @@
 import streamlit as st
 from rembg import remove
 from PIL import Image
+import os
 
-def remove_background(input_image):
-    # Remove the background from the input image
-    output_image = remove(input_image)
+# Dictionary mapping color names to their RGB values
+COLORS = {
+    "Blue": (0, 0, 255),
+    "Black": (0, 0, 0),
+    "Green": (0, 128, 0),
+    "Pink": (255, 192, 203),
+    "White": (255, 255, 255),
+    "Yellow": (255, 255, 0),
+    "Brown": (165, 42, 42),
+    "Sky Blue": (135, 206, 235),
+    "Red": (255, 0, 0)
+}
+
+# Dictionary mapping file extensions to image formats
+IMAGE_FORMATS = {
+    "JPEG": "jpeg",
+    "PNG": "png",
+    "BMP": "bmp",
+    "TIFF": "tiff"
+}
+
+def apply_color_to_image(input_image, color):
+    # Apply the selected color to the input image
+    output_image = input_image.copy()
+    width, height = output_image.size
+    for x in range(width):
+        for y in range(height):
+            pixel = list(output_image.getpixel((x, y)))
+            alpha = pixel[3]  # Alpha channel value
+            if alpha > 0:
+                pixel[:3] = color  # Replace RGB values
+            output_image.putpixel((x, y), tuple(pixel))
     return output_image
 
 def main():
-    st.title('DAVETECH-BG-REMOVER')
-
-    # Add sidebar with service options
-    service = st.sidebar.selectbox("Select Service", ["HOME", "SELECT COLOR", "DOWNLOAD"])
+    st.sidebar.title('DAVETECH-BG-REMOVER')
+    service = st.sidebar.radio("Select Service", ["HOME", "SELECT COLOUR", "DOWNLOAD"])
 
     if service == "HOME":
-        st.markdown("Welcome to DAVETECH-BG-REMOVER!")
-    elif service == "SELECT COLOR":
-        st.markdown("This service is under construction. Please check back later!")
+        st.title('Welcome to DAVETECH-BG-REMOVER')
+        st.write("This is the home page of the DAVETECH-BG-REMOVER web app. Select different services from the sidebar.")
+
+    elif service == "SELECT COLOUR":
+        st.title('Select Colour Service')
+        st.write("Choose a color from the sidebar to apply to the image.")
+
     elif service == "DOWNLOAD":
-        st.markdown("This service is under construction. Please check back later!")
-    
-    st.markdown('Upload an image and remove its background!')
+        st.sidebar.subheader("Download Image")
+        selected_color = st.sidebar.selectbox("Choose a color", list(COLORS.keys()))
 
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+        input_image = Image.open("your_image.jpg")
 
-    if uploaded_file is not None:
-        # Read the uploaded image file
-        input_image = Image.open(uploaded_file)
+        st.image(input_image, caption="Original Image", use_column_width=True)
 
-        # Display the uploaded image
-        st.image(input_image, caption="Uploaded Image", use_column_width=True)
+        if st.button("Apply Color"):
+            color_rgb = COLORS[selected_color]
+            output_image = apply_color_to_image(input_image, color_rgb)
+            st.image(output_image, caption="Image with Selected Color", use_column_width=True)
 
-        # Check if the user clicked the 'Remove Background' button
-        if st.button('Remove Background'):
-            # Call the function to remove the background
-            output_image = remove_background(input_image)
+            # Save the processed image
+            output_format = st.selectbox("Choose a format for download", list(IMAGE_FORMATS.keys()))
+            output_path = "processed_image." + IMAGE_FORMATS[output_format]
+            output_image.save(output_path)
+            st.success("Image processed and saved successfully!")
 
-            # Display the output image with the background removed
-            st.image(output_image, caption="Output Image", use_column_width=True)
-            st.success('Background removed successfully!')
+            # Provide a download link for the processed image
+            st.markdown(f"### [Download Processed Image]({output_path})")
 
 if __name__ == "__main__":
     main()
