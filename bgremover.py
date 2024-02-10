@@ -9,6 +9,17 @@ def remove_background(input_image):
 
 def main():
     st.title('DAVETECH-BG-REMOVER')
+
+    # Add sidebar with service options
+    service = st.sidebar.selectbox("Select Service", ["HOME", "SELECT COLOR", "DOWNLOAD"])
+
+    if service == "HOME":
+        st.markdown("Welcome to DAVETECH-BG-REMOVER!")
+    elif service == "SELECT COLOR":
+        st.markdown("This service is under construction. Please check back later!")
+    elif service == "DOWNLOAD":
+        st.markdown("This service is under construction. Please check back later!")
+    
     st.markdown('Upload an image and remove its background!')
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
