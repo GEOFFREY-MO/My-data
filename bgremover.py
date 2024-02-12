@@ -49,8 +49,6 @@ def main():
         st.title('Select Colour Service')
         st.write("Choose a color from the sidebar to apply to the image.")
 
-    elif service == "DOWNLOAD":
-        st.sidebar.subheader("Download Image")
         selected_color = st.sidebar.selectbox("Choose a color", list(COLORS.keys()))
 
         input_image = Image.open("your_image.jpg")
@@ -62,13 +60,21 @@ def main():
             output_image = apply_color_to_image(input_image, color_rgb)
             st.image(output_image, caption="Image with Selected Color", use_column_width=True)
 
-            # Save the processed image
-            output_format = st.selectbox("Choose a format for download", list(IMAGE_FORMATS.keys()))
-            output_path = "processed_image." + IMAGE_FORMATS[output_format]
+    elif service == "DOWNLOAD":
+        st.sidebar.subheader("Download Image")
+
+        input_image = Image.open("your_image.jpg")
+
+        st.image(input_image, caption="Original Image", use_column_width=True)
+
+        if st.button("Remove Background"):
+            output_image = remove(input_image)
+            st.image(output_image, caption="Background Removed", use_column_width=True)
+
+        if st.button("Download Processed Image"):
+            output_path = "processed_image.png"
             output_image.save(output_path)
             st.success("Image processed and saved successfully!")
-
-            # Provide a download link for the processed image
             st.markdown(f"### [Download Processed Image]({output_path})")
 
 if __name__ == "__main__":
