@@ -3,6 +3,11 @@ from rembg import remove
 from PIL import Image
 import os
 
+# Function to remove background from the image
+def remove_background(input_image):
+    output_image = remove(input_image)
+    return output_image
+
 # Function to apply color to the image
 def apply_color_to_image(input_image, color):
     output_image = input_image.copy()
@@ -24,7 +29,7 @@ def download_image(image, format):
 
 # Main function
 def main():
-    st.title("Image Color Changer")
+    st.title("Image Background Remover & Color Changer")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
