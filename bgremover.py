@@ -3,79 +3,77 @@ from rembg import remove
 from PIL import Image
 import os
 
-# Dictionary mapping color names to their RGB values
-COLORS = {
-    "Blue": (0, 0, 255),
-    "Black": (0, 0, 0),
-    "Green": (0, 128, 0),
-    "Pink": (255, 192, 203),
-    "White": (255, 255, 255),
-    "Yellow": (255, 255, 0),
-    "Brown": (165, 42, 42),
-    "Sky Blue": (135, 206, 235),
-    "Red": (255, 0, 0)
-}
-
-# Dictionary mapping file extensions to image formats
-IMAGE_FORMATS = {
-    "JPEG": "jpeg",
-    "PNG": "png",
-    "BMP": "bmp",
-    "TIFF": "tiff"
-}
-
+# Function to apply color to the image
 def apply_color_to_image(input_image, color):
-    # Apply the selected color to the input image
     output_image = input_image.copy()
     width, height = output_image.size
     for x in range(width):
         for y in range(height):
             pixel = list(output_image.getpixel((x, y)))
-            alpha = pixel[3]  # Alpha channel value
+            alpha = pixel[3] if len(pixel) > 3 else 255
             if alpha > 0:
-                pixel[:3] = color  # Replace RGB values
+                pixel[:3] = color
             output_image.putpixel((x, y), tuple(pixel))
     return output_image
 
+# Function to download the image
+def download_image(image, format):
+    img_path = "processed_image." + format.lower()
+    image.save(img_path)
+    return img_path
+
+# Main function
 def main():
-    st.sidebar.title('DAVETECH-BG-REMOVER')
-    service = st.sidebar.radio("Select Service", ["HOME", "SELECT COLOUR", "DOWNLOAD"])
+    st.title("Image Color Changer")
 
-    if service == "HOME":
-        st.title('Welcome to DAVETECH-BG-REMOVER')
-        st.write("This is the home page of the DAVETECH-BG-REMOVER web app. Select different services from the sidebar.")
+    # File uploader
+    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-    elif service == "SELECT COLOUR":
-        st.title('Select Colour Service')
-        st.write("Choose a color from the sidebar to apply to the image.")
+    # Select color
+    color = st.selectbox("Select a color", ["Blue", "Yellow", "Pink", "Sky Blue", "Red", "Black", "Green"])
 
-        selected_color = st.sidebar.selectbox("Choose a color", list(COLORS.keys()))
+    # Select image quality
+    quality = st.selectbox("Select image quality", ["Low", "Standard", "High"])
 
-        input_image = Image.open("your_image.jpg")
+    if uploaded_file is not None:
+        # Read the uploaded image file
+        input_image = Image.open(uploaded_file)
 
-        st.image(input_image, caption="Original Image", use_column_width=True)
+        # Display the uploaded image
+        st.image(input_image, caption="Uploaded Image", use_column_width=True)
 
-        if st.button("Apply Color"):
-            color_rgb = COLORS[selected_color]
+        # Check if the user clicked the 'Apply Color' button
+        if st.button('Apply Color'):
+            colors = {
+                "Blue": (0, 0, 255),
+                "Yellow": (255, 255, 0),
+                "Pink": (255, 192, 203),
+                "Sky Blue": (135, 206, 235),
+                "Red": (255, 0, 0),
+                "Black": (0, 0, 0),
+                "Green": (0, 128, 0)
+            }
+            color_rgb = colors[color]
             output_image = apply_color_to_image(input_image, color_rgb)
-            st.image(output_image, caption="Image with Selected Color", use_column_width=True)
 
-    elif service == "DOWNLOAD":
-        st.sidebar.subheader("Download Image")
+            # Display the output image with the color changed
+            st.image(output_image, caption="Output Image", use_column_width=True)
+            
+            # Download options
+            if st.button("Download Image"):
+                img_format = st.selectbox("Select image format", ["JPEG", "PNG", "BMP", "TIFF"])
+                
+                # Set image quality based on user selection
+                if quality == "Low":
+                    output_image.save("temp_image.png", quality=30)
+                elif quality == "Standard":
+                    output_image.save("temp_image.png", quality=70)
+                elif quality == "High":
+                    output_image.save("temp_image.png", quality=100)
 
-        input_image = Image.open("your_image.jpg")
-
-        st.image(input_image, caption="Original Image", use_column_width=True)
-
-        if st.button("Remove Background"):
-            output_image = remove(input_image)
-            st.image(output_image, caption="Background Removed", use_column_width=True)
-
-        if st.button("Download Processed Image"):
-            output_path = "processed_image.png"
-            output_image.save(output_path)
-            st.success("Image processed and saved successfully!")
-            st.markdown(f"### [Download Processed Image]({output_path})")
+                # Download the image
+                img_path = download_image(output_image, img_format)
+                st.markdown(f"### [Download Processed Image]({img_path})")
 
 if __name__ == "__main__":
     main()
