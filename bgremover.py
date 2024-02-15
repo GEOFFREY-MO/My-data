@@ -20,7 +20,7 @@ def apply_background_color(image, color):
 
 # Main function
 def main():
-    st.title("Image Background Remover")
+    st.title("DAVETECH BACK GROUND REMOVER")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
@@ -44,6 +44,8 @@ def main():
             color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
 
             # Apply background color to the output image
+            background_color = (0, 0, 0)  # Default background color is black
+            
             if color == "Red":
                 background_color = (255, 0, 0)  # Red
             elif color == "Blue":
