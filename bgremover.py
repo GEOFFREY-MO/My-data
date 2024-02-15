@@ -20,7 +20,7 @@ def apply_background_color(image, color):
 
 # Main function
 def main():
-    st.title("DAVETECH-Back ground remover")
+    st.title("Image Background Remover")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
@@ -63,13 +63,18 @@ def main():
 
             # Convert output image to bytes for downloading
             img_bytes = io.BytesIO()
-            if format == "JPEG":
-                output_with_color.save(img_bytes, format="JPEG", quality=get_quality(quality))
-            elif format == "PNG":
-                output_with_color.save(img_bytes, format="PNG")
+            try:
+                if format == "JPEG":
+                    output_with_color.save(img_bytes, format="JPEG", quality=get_quality(quality))
+                elif format == "PNG":
+                    output_with_color.save(img_bytes, format="PNG")
+            except Exception as e:
+                st.error("Error occurred while saving the image. Please try again.")
 
-            # Generate download button
-            st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
+            # Generate download button if image bytes exist
+            if img_bytes.tell() > 0:
+                img_bytes.seek(0)
+                st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
 
 # Function to get quality based on user selection
 def get_quality(quality):
@@ -78,7 +83,7 @@ def get_quality(quality):
     elif quality == "Standard":
         return 80
     elif quality == "High":
-        return 100
+        return 90
 
 if __name__ == "__main__":
     main()
