@@ -18,6 +18,15 @@ def apply_background_color(image, color):
     
     return result
 
+# Function to get quality based on user selection
+def get_quality(quality):
+    if quality == "Basic":
+        return 70
+    elif quality == "Standard":
+        return 80
+    elif quality == "High":
+        return 90
+
 # Main function
 def main():
     st.title("Image Background Remover")
@@ -39,56 +48,48 @@ def main():
             # Display the output image with the background removed
             st.image(output_image, caption="Output Image", use_column_width=True)
 
-            # Sidebar for selecting background color
-            st.sidebar.title("Background Color")
-            color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
+    # Sidebar for selecting background color
+    st.sidebar.title("Background Color")
+    color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
 
-            # Apply background color to the output image
-            background_color = (0, 0, 0)  # Default background color is black
-            
-            if color == "Red":
-                background_color = (255, 0, 0)  # Red
-            elif color == "Blue":
-                background_color = (0, 0, 255)  # Blue
-            elif color == "Green":
-                background_color = (0, 255, 0)  # Green
-            elif color == "Black":
-                background_color = (0, 0, 0)    # Black
-            
-            output_with_color = apply_background_color(output_image, background_color)
-            st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
+    # Apply background color to the output image
+    background_color = (0, 0, 0)  # Default background color is black
+    if color == "Red":
+        background_color = (255, 0, 0)  # Red
+    elif color == "Blue":
+        background_color = (0, 0, 255)  # Blue
+    elif color == "Green":
+        background_color = (0, 255, 0)  # Green
+    elif color == "Black":
+        background_color = (0, 0, 0)    # Black
 
-            # Download options
-            st.sidebar.title("Download Options")
-            format = st.sidebar.selectbox("Select format", ["JPEG", "PNG"])
-            quality = st.sidebar.selectbox("Select quality", ["Basic", "Standard", "High"])
+    # Download options
+    st.sidebar.title("Download Options")
+    format = st.sidebar.selectbox("Select format", ["JPEG", "PNG"])
+    quality = st.sidebar.selectbox("Select quality", ["Basic", "Standard", "High"])
 
-            # Convert output image to bytes for downloading
-            img_bytes = io.BytesIO()
-            try:
-                if format == "JPEG":
-                    # Convert the image to RGB mode before saving as JPEG
-                    output_with_color_rgb = output_with_color.convert("RGB")
-                    output_with_color_rgb.save(img_bytes, format="JPEG", quality=get_quality(quality))
-                elif format == "PNG":
-                    output_with_color.save(img_bytes, format="PNG")
-            except Exception as e:
-                st.error(f"Error occurred while saving the image: {str(e)}")
-                st.write("Please try again.")
+    if uploaded_file:
+        # Apply background color to the output image
+        output_with_color = apply_background_color(output_image, background_color)
+        st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
 
-            # Generate download button if image bytes exist
-            if img_bytes.tell() > 0:
-                img_bytes.seek(0)
-                st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
+        # Convert output image to bytes for downloading
+        img_bytes = io.BytesIO()
+        try:
+            if format == "JPEG":
+                # Convert the image to RGB mode before saving as JPEG
+                output_with_color_rgb = output_with_color.convert("RGB")
+                output_with_color_rgb.save(img_bytes, format="JPEG", quality=get_quality(quality))
+            elif format == "PNG":
+                output_with_color.save(img_bytes, format="PNG")
+        except Exception as e:
+            st.error(f"Error occurred while saving the image: {str(e)}")
+            st.write("Please try again.")
 
-# Function to get quality based on user selection
-def get_quality(quality):
-    if quality == "Basic":
-        return 70
-    elif quality == "Standard":
-        return 80
-    elif quality == "High":
-        return 90
+        # Generate download button if image bytes exist
+        if img_bytes.tell() > 0:
+            img_bytes.seek(0)
+            st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
 
 if __name__ == "__main__":
     main()
