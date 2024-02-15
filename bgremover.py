@@ -1,6 +1,7 @@
 import streamlit as st
 from rembg import remove
 from PIL import Image
+import io
 
 # Function to remove background from the image
 def remove_background(input_image):
@@ -54,6 +55,30 @@ def main():
             
             output_with_color = apply_background_color(output_image, background_color)
             st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
+
+            # Download options
+            st.sidebar.title("Download Options")
+            format = st.sidebar.selectbox("Select format", ["JPEG", "PNG"])
+            quality = st.sidebar.selectbox("Select quality", ["Basic", "Standard", "High"])
+
+            # Convert output image to bytes for downloading
+            img_bytes = io.BytesIO()
+            if format == "JPEG":
+                output_with_color.save(img_bytes, format="JPEG", quality=get_quality(quality))
+            elif format == "PNG":
+                output_with_color.save(img_bytes, format="PNG")
+
+            # Generate download button
+            st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
+
+# Function to get quality based on user selection
+def get_quality(quality):
+    if quality == "Basic":
+        return 70
+    elif quality == "Standard":
+        return 80
+    elif quality == "High":
+        return 100
 
 if __name__ == "__main__":
     main()
