@@ -2,6 +2,7 @@ import streamlit as st
 from rembg import remove
 from PIL import Image
 import io
+from streamlit import SessionState
 
 # Function to remove background from the image
 def remove_background(input_image):
@@ -20,7 +21,7 @@ def apply_background_color(image, color):
 
 # Main function
 def main():
-    st.title("DAVETECH BACK GROUND REMOVER")
+    st.title("Image Background Remover")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
@@ -40,23 +41,21 @@ def main():
             st.image(output_image, caption="Output Image", use_column_width=True)
 
             # Sidebar for selecting background color
-            st.sidebar.title("Background Color")
-            color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
+            session_state = SessionState.get(selected_color="Red")
+            session_state.selected_color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
 
             # Apply background color to the output image
             background_color = (0, 0, 0)  # Default background color is black
-            
-            if color == "Red":
+            if session_state.selected_color == "Red":
                 background_color = (255, 0, 0)  # Red
-            elif color == "Blue":
+            elif session_state.selected_color == "Blue":
                 background_color = (0, 0, 255)  # Blue
-            elif color == "Green":
+            elif session_state.selected_color == "Green":
                 background_color = (0, 255, 0)  # Green
-            elif color == "Black":
+            elif session_state.selected_color == "Black":
                 background_color = (0, 0, 0)    # Black
-            
             output_with_color = apply_background_color(output_image, background_color)
-            st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
+            st.image(output_with_color, caption=f"Output Image with {session_state.selected_color} background", use_column_width=True)
 
             # Download options
             st.sidebar.title("Download Options")
