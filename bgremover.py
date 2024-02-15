@@ -7,6 +7,16 @@ def remove_background(input_image):
     output_image = remove(input_image)
     return output_image
 
+# Function to apply background color to the image
+def apply_background_color(image, color):
+    # Create a solid color image with the same size as the input image
+    background = Image.new("RGB", image.size, color)
+    
+    # Composite the input image on top of the solid color background
+    result = Image.alpha_composite(background, image.convert("RGBA"))
+    
+    return result
+
 # Main function
 def main():
     st.title("Image Background Remover")
@@ -27,6 +37,23 @@ def main():
 
             # Display the output image with the background removed
             st.image(output_image, caption="Output Image", use_column_width=True)
+
+            # Sidebar for selecting background color
+            st.sidebar.title("Background Color")
+            color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
+
+            # Apply background color to the output image
+            if color == "Red":
+                background_color = (255, 0, 0)  # Red
+            elif color == "Blue":
+                background_color = (0, 0, 255)  # Blue
+            elif color == "Green":
+                background_color = (0, 255, 0)  # Green
+            elif color == "Black":
+                background_color = (0, 0, 0)    # Black
+            
+            output_with_color = apply_background_color(output_image, background_color)
+            st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
 
 if __name__ == "__main__":
     main()
