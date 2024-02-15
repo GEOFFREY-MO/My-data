@@ -18,15 +18,6 @@ def apply_background_color(image, color):
     
     return result
 
-# Function to get quality based on user selection
-def get_quality(quality):
-    if quality == "Basic":
-        return 70
-    elif quality == "Standard":
-        return 80
-    elif quality == "High":
-        return 90
-
 # Main function
 def main():
     st.title("Image Background Remover")
@@ -45,25 +36,22 @@ def main():
         if st.button('Remove Background'):
             output_image = remove_background(input_image)
 
-            # Display the output image with the background removed
-            st.image(output_image, caption="Output Image", use_column_width=True)
-
             # Sidebar for selecting background color
             st.sidebar.title("Background Color")
             color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
 
             # Apply background color to the output image
             background_color = (0, 0, 0)  # Default background color is black
-            if color == "White":
-                background_color = (255,255,255) #White
+            
+            if color == "Red":
+                background_color = (255, 0, 0)  # Red
             elif color == "Blue":
                 background_color = (0, 0, 255)  # Blue
             elif color == "Green":
                 background_color = (0, 255, 0)  # Green
             elif color == "Black":
                 background_color = (0, 0, 0)    # Black
-
-            # Apply background color to the output image
+            
             output_with_color = apply_background_color(output_image, background_color)
             st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
 
@@ -89,6 +77,15 @@ def main():
             if img_bytes.tell() > 0:
                 img_bytes.seek(0)
                 st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
+
+# Function to get quality based on user selection
+def get_quality(quality):
+    if quality == "Basic":
+        return 70
+    elif quality == "Standard":
+        return 80
+    elif quality == "High":
+        return 90
 
 if __name__ == "__main__":
     main()
