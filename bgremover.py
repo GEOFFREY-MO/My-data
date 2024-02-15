@@ -8,17 +8,10 @@ def remove_background(input_image):
     output_image = remove(input_image)
     return output_image
 
-# Function to apply color to the image
-def apply_color_to_image(input_image, color):
-    output_image = input_image.copy()
-    width, height = output_image.size
-    for x in range(width):
-        for y in range(height):
-            pixel = list(output_image.getpixel((x, y)))
-            alpha = pixel[3] if len(pixel) > 3 else 255
-            if alpha > 0:
-                pixel[:3] = color
-            output_image.putpixel((x, y), tuple(pixel))
+# Function to apply color as background to the image
+def apply_color_as_background(input_image, color):
+    output_image = Image.new("RGB", input_image.size, color)
+    output_image.paste(input_image, (0, 0), input_image)
     return output_image
 
 # Function to download the image
@@ -34,8 +27,8 @@ def main():
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-    # Select color
-    color = st.selectbox("Select a color", ["Blue", "Yellow", "Pink", "Sky Blue", "Red", "Black", "Green"])
+    # Select color for background
+    color = st.selectbox("Select a color for background", ["Blue", "Yellow", "Pink", "Sky Blue", "Red", "Black", "Green"])
 
     # Select image quality
     quality = st.selectbox("Select image quality", ["Low", "Standard", "High"])
@@ -47,8 +40,8 @@ def main():
         # Display the uploaded image
         st.image(input_image, caption="Uploaded Image", use_column_width=True)
 
-        # Check if the user clicked the 'Apply Color' button
-        if st.button('Apply Color'):
+        # Check if the user clicked the 'Apply Background Color' button
+        if st.button('Apply Background Color'):
             colors = {
                 "Blue": (0, 0, 255),
                 "Yellow": (255, 255, 0),
@@ -58,10 +51,10 @@ def main():
                 "Black": (0, 0, 0),
                 "Green": (0, 128, 0)
             }
-            color_rgb = colors[color]
-            output_image = apply_color_to_image(input_image, color_rgb)
+            background_color = colors[color]
+            output_image = apply_color_as_background(input_image, background_color)
 
-            # Display the output image with the color changed
+            # Display the output image with the background color applied
             st.image(output_image, caption="Output Image", use_column_width=True)
             
             # Download options
