@@ -47,7 +47,7 @@ def main():
 
             # Display the output image with the background removed
             st.image(output_image, caption="Output Image", use_column_width=True)
-            
+
             # Sidebar for selecting background color
             st.sidebar.title("Background Color")
             color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
@@ -63,14 +63,14 @@ def main():
             elif color == "Black":
                 background_color = (0, 0, 0)    # Black
 
+            # Apply background color to the output image
+            output_with_color = apply_background_color(output_image, background_color)
+            st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
+
             # Download options
             st.sidebar.title("Download Options")
             format = st.sidebar.selectbox("Select format", ["JPEG", "PNG"])
             quality = st.sidebar.selectbox("Select quality", ["Basic", "Standard", "High"])
-
-            # Apply background color to the output image
-            output_with_color = apply_background_color(output_image, background_color)
-            st.image(output_with_color, caption=f"Output Image with {color} background", use_column_width=True)
 
             # Convert output image to bytes for downloading
             img_bytes = io.BytesIO()
