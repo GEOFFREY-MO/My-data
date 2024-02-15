@@ -12,8 +12,8 @@ def apply_background_color(image, color):
     # Create a solid color image with the same size as the input image
     background = Image.new("RGB", image.size, color)
     
-    # Composite the input image on top of the solid color background
-    result = Image.alpha_composite(background, image.convert("RGBA"))
+    # Paste the input image on top of the solid color background
+    result = Image.alpha_composite(background.convert('RGBA'), image.convert('RGBA'))
     
     return result
 
