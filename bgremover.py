@@ -56,8 +56,6 @@ def main():
             background_color = (0, 0, 0)  # Default background color is black
             if color == "White":
                 background_color = (255,255,255) #White
-            elif color == "Red":
-                background_color = (255, 0, 0)  # Red
             elif color == "Blue":
                 background_color = (0, 0, 255)  # Blue
             elif color == "Green":
