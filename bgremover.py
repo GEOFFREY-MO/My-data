@@ -65,7 +65,9 @@ def main():
             img_bytes = io.BytesIO()
             try:
                 if format == "JPEG":
-                    output_with_color.save(img_bytes, format="JPEG", quality=get_quality(quality))
+                    # Convert the image to RGB mode before saving as JPEG
+                    output_with_color_rgb = output_with_color.convert("RGB")
+                    output_with_color_rgb.save(img_bytes, format="JPEG", quality=get_quality(quality))
                 elif format == "PNG":
                     output_with_color.save(img_bytes, format="PNG")
             except Exception as e:
