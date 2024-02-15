@@ -69,7 +69,8 @@ def main():
                 elif format == "PNG":
                     output_with_color.save(img_bytes, format="PNG")
             except Exception as e:
-                st.error("Error occurred while saving the image. Please try again.")
+                st.error(f"Error occurred while saving the image: {str(e)}")
+                st.write("Please try again.")
 
             # Generate download button if image bytes exist
             if img_bytes.tell() > 0:
