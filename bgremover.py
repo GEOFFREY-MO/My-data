@@ -20,7 +20,7 @@ def apply_background_color(image, color):
 
 # Main function
 def main():
-    st.title("Image Background Remover")
+    st.title("DAVETECH-Back ground remover")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
