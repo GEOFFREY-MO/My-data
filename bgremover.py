@@ -4,90 +4,32 @@ from PIL import Image
 import io
 from streamlit import SessionState
 
-# Function to remove background from the image
-def remove_background(input_image):
-    output_image = remove(input_image)
-    return output_image
+# Function to remove background and apply color
+def remove_and_apply_color(input_image, color):
+    # Your logic to remove background and apply color goes here
+    pass
 
-# Function to apply background color to the image
-def apply_background_color(image, color):
-    # Create a solid color image with the same size as the input image
-    background = Image.new("RGB", image.size, color)
-    
-    # Paste the input image on top of the solid color background
-    result = Image.alpha_composite(background.convert('RGBA'), image.convert('RGBA'))
-    
-    return result
-
-# Main function
 def main():
-    st.title("Image Background Remover")
+    st.title('Background Remover with Color Change')
+    
+    # Initialize session state
+    if 'color' not in st.session_state:
+        st.session_state.color = 'red'  # Default color
 
-    # File uploader
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    # Upload image
+    uploaded_image = st.file_uploader("Upload Image", type=['jpg', 'png'])
+    if uploaded_image is not None:
+        st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
 
-    if uploaded_file is not None:
-        # Read the uploaded image file
-        input_image = Image.open(uploaded_file)
+        # Button to remove background and apply color
+        if st.button("Remove Background and Apply Color"):
+            # Call function to remove background and apply color
+            result_image = remove_and_apply_color(uploaded_image, st.session_state.color)
+            st.image(result_image, caption="Processed Image", use_column_width=True)
 
-        # Display the uploaded image
-        st.image(input_image, caption="Uploaded Image", use_column_width=True)
-
-        # Check if the user clicked the 'Remove Background' button
-        if st.button('Remove Background'):
-            output_image = remove_background(input_image)
-
-            # Display the output image with the background removed
-            st.image(output_image, caption="Output Image", use_column_width=True)
-
-            # Sidebar for selecting background color
-            session_state = SessionState.get(selected_color="Red")
-            session_state.selected_color = st.sidebar.selectbox("Select background color", ["Red", "Blue", "Green", "Black"])
-
-            # Apply background color to the output image
-            background_color = (0, 0, 0)  # Default background color is black
-            if session_state.selected_color == "Red":
-                background_color = (255, 0, 0)  # Red
-            elif session_state.selected_color == "Blue":
-                background_color = (0, 0, 255)  # Blue
-            elif session_state.selected_color == "Green":
-                background_color = (0, 255, 0)  # Green
-            elif session_state.selected_color == "Black":
-                background_color = (0, 0, 0)    # Black
-            output_with_color = apply_background_color(output_image, background_color)
-            st.image(output_with_color, caption=f"Output Image with {session_state.selected_color} background", use_column_width=True)
-
-            # Download options
-            st.sidebar.title("Download Options")
-            format = st.sidebar.selectbox("Select format", ["JPEG", "PNG"])
-            quality = st.sidebar.selectbox("Select quality", ["Basic", "Standard", "High"])
-
-            # Convert output image to bytes for downloading
-            img_bytes = io.BytesIO()
-            try:
-                if format == "JPEG":
-                    # Convert the image to RGB mode before saving as JPEG
-                    output_with_color_rgb = output_with_color.convert("RGB")
-                    output_with_color_rgb.save(img_bytes, format="JPEG", quality=get_quality(quality))
-                elif format == "PNG":
-                    output_with_color.save(img_bytes, format="PNG")
-            except Exception as e:
-                st.error(f"Error occurred while saving the image: {str(e)}")
-                st.write("Please try again.")
-
-            # Generate download button if image bytes exist
-            if img_bytes.tell() > 0:
-                img_bytes.seek(0)
-                st.sidebar.download_button("Download Image", img_bytes.getvalue(), f"output_image.{format.lower()}")
-
-# Function to get quality based on user selection
-def get_quality(quality):
-    if quality == "Basic":
-        return 70
-    elif quality == "Standard":
-        return 80
-    elif quality == "High":
-        return 90
+    # Select background color
+    st.sidebar.subheader("Select Background Color")
+    st.session_state.color = st.sidebar.radio("Color", options=['red', 'blue', 'green'])
 
 if __name__ == "__main__":
     main()
